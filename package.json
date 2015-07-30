@@ -1,0 +1,16 @@
+{
+  "name": "mqrpc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "iojs --harmony_proxies --harmony_arrow_functions ./testClient.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.3.2",
+    "co": "^4.6.0",
+    "harmony-reflect": "^1.4.0"
+  }
+}
