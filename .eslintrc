@@ -1,0 +1,17 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "rules": {
+    "quotes": [1, "single"],
+    "strict": 0,
+    "no-use-before-define": [1, "nofunc"],
+    "no-underscore-dangle": 0,
+    "no-unused-vars": 1,
+    "eol-last": 1,
+    "no-trailing-spaces": 0
+  },
+  "globals": {
+  }
+}
