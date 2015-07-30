@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client": "iojs --harmony_proxies --harmony_arrow_functions ./testClient.js"
+    "client": "iojs --harmony_proxies --harmony_arrow_functions ./testClient.js",
+    "server": "iojs --harmony_proxies --harmony_arrow_functions ./testServer.js"
   },
   "author": "",
   "license": "ISC",

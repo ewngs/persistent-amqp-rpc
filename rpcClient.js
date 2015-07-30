@@ -22,8 +22,9 @@ class RPCClient {
 
   constructor(serviceName) {
     this.serviceName = serviceName;
+    this.queue = `rpc.queue.${this.serviceName}`;
 
-    if (amqpChannel && !this.channelsRegistered) {
+    if (amqpChannel && !this.queuesRegistered) {
       this.registerQueues();
     }
 
@@ -31,7 +32,8 @@ class RPCClient {
       get(targetObj, propKey) {
         return function () {
           return new Promise(function (resolve) {
-            setTimeout(resolve, 1000);
+            amqpChannel.consume(this.queue);
+            resolve();
           });
         };
       }
@@ -39,7 +41,8 @@ class RPCClient {
   }
 
   registerQueues() {
-    this.channelsRegistered = true;
+    this.queuesRegistered = true;
+    amqpChannel.assertQueue(this.queue, queueOptions);
   }
 
 }

@@ -13,12 +13,20 @@
 //     channel.sendToQueue(queueName, new Buffer('this is a message'));
 //   });
 // });
-
 'use strict';
-const someService = require('./rpcClient')('someService');
-const co = require('co');
 
-co(function* () {
-  let res = yield someService.testMethod('ccc');
-  console.log(res);
+function someAsyncOveration(param) {
+    return new Promise(function (resolve) {
+      setTimeout(function() {
+          resolve(`some async operation finished! Params: ${param}`);
+      }, 1000);
+    });
+}
+
+function* testMethod(param) {
+    return yield someAsyncOveration(param);
+}
+
+require('./rpcServer')('someService', {
+    testMethod: testMethod
 });
