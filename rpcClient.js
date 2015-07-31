@@ -61,7 +61,7 @@ class RPCClient {
         const self = this;
         this.serviceName = serviceName;
         this.rpcQueueName = `rpc.queue.${serviceName}`;
-        this.functionQueue = {};
+        this.pendingProcedures = {};
 
         if (amqpChannel && !this.queuesRegistered) {
             this.registerQueues();
@@ -73,7 +73,7 @@ class RPCClient {
                     const args = Array.prototype.slice.call(arguments);
                     return new Promise(function (resolve, reject) {
                         let uid = self.generateUID();
-                        self.functionQueue[uid] = {
+                        self.pendingProcedures[uid] = {
                             uid,
                             method,
                             arguments: args,
@@ -121,10 +121,10 @@ class RPCClient {
         }
 
         const uid = message.properties.correlationId;
-        const def = this.functionQueue[uid];
+        const def = this.pendingProcedures[uid];
         if (def) {
             let data;
-            delete this.functionQueue[uid];
+            delete this.pendingProcedures[uid];
 
             try {
                 data = JSON.parse(message.content.toString());
@@ -156,8 +156,8 @@ class RPCClient {
 
     processFunctionQueue() {
         const self = this;
-        Object.keys(this.functionQueue).forEach(uid => {
-            let def = self.functionQueue[uid];
+        Object.keys(this.pendingProcedures).forEach(uid => {
+            let def = self.pendingProcedures[uid];
             if (!def.sent) {
                 def.sent = new Date();
                 amqpChannel.publish('', self.rpcQueueName, new Buffer(JSON.stringify({
