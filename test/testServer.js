@@ -12,6 +12,6 @@ function* testMethod(param) {
     return yield someAsyncOveration(param);
 }
 
-require('./rpcServer')('someService', {
+require('..').server('someService', {
     testMethod: testMethod
 });

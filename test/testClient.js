@@ -15,7 +15,7 @@
 // });
 
 'use strict';
-const someService = require('./rpcClient')('someService');
+const someService = require('..').client('someService');
 const co = require('co');
 
 co(function* () {

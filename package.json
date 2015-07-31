@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "client": "iojs --harmony_proxies --harmony_arrow_functions ./testClient.js",
-    "server": "iojs --harmony_proxies --harmony_arrow_functions ./testServer.js",
-    "test": "iojs --harmony_proxies --harmony_arrow_functions ./test.js | tap-spec"
+    "client": "iojs --harmony_proxies --harmony_arrow_functions test/testClient.js",
+    "server": "iojs --harmony_proxies --harmony_arrow_functions test/testServer.js",
+    "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
   "author": "",
   "license": "ISC",
