@@ -10,44 +10,121 @@ function shutdown() {
     }, 10);
 }
 
-test('should handle simple functions', t => {
-    t.plan(1);
+test('simple functions', t => {
+    t.test('should call', st => {
+        st.plan(1);
 
-    rpc.server('testService' + i, {
-        testCall: function() {
-            t.pass('It should call the RPC function');
-        }
-    });
-
-    rpc.client('testService' + i++).testCall();
-});
-
-test('should pass parameters to simple functions', t => {
-    t.plan(3);
-
-    rpc.server('testService' + i, {
-        testParams: function(a, b, c) {
-            t.equal(a, 1);
-            t.equal(b, 'two');
-            t.deepEqual(c, [3]);
-        }
-    });
-
-    rpc.client('testService' + i++).testParams(1, 'two', [3]);
-});
-
-test('should return result of a simple functions', t => {
-    t.plan(1);
-
-    rpc.server('testService' + i, {
-        add: function(a, b) {
-            return a + b;
-        }
-    });
-
-    rpc.client('testService' + i++).add(1, 2)
-        .then(result => {
-            t.equal(result, 3);
-            shutdown();
+        rpc.server('testService' + i, {
+            testCall: function() {
+                st.pass('It should call the RPC function');
+            }
         });
+
+        rpc.client('testService' + i++).testCall();
+    });
+
+    t.test('should pass parameters', st => {
+        st.plan(3);
+
+        rpc.server('testService' + i, {
+            testParams: function(a, b, c) {
+                st.equal(a, 1);
+                st.equal(b, 'two');
+                st.deepEqual(c, [3]);
+            }
+        });
+
+        rpc.client('testService' + i++).testParams(1, 'two', [3]);
+    });
+
+    t.test('should return result', st => {
+        st.plan(1);
+
+        rpc.server('testService' + i, {
+            add: function(a, b) {
+                return a + b;
+            }
+        });
+
+        rpc.client('testService' + i++).add(1, 2)
+            .then(result => {
+                st.equal(result, 3);
+            });
+    });
+
+    t.test('should return result object', st => {
+        st.plan(2);
+
+        rpc.server('testService' + i, {
+            calculate: function(a, b) {
+                return {add: a + b, multiply: a * b};
+            }
+        });
+
+        rpc.client('testService' + i++).calculate(1, 2)
+            .then(result => {
+                st.equal(result.add, 3);
+                st.equal(result.multiply, 2);
+            });
+    });
+});
+
+test('generator functions', t => {
+    t.test('should call', st => {
+        st.plan(1);
+
+        rpc.server('testService' + i, {
+            testCall: function*() {
+                st.pass('It should call the RPC function');
+            }
+        });
+
+        rpc.client('testService' + i++).testCall();
+    });
+
+    t.test('should pass parameters', st => {
+        st.plan(3);
+
+        rpc.server('testService' + i, {
+            testParams: function*(a, b, c) {
+                st.equal(a, 1);
+                st.equal(b, 'two');
+                st.deepEqual(c, [3]);
+            }
+        });
+
+        rpc.client('testService' + i++).testParams(1, 'two', [3]);
+    });
+
+    t.test('should return result', st => {
+        st.plan(1);
+
+        rpc.server('testService' + i, {
+            add: function*(a, b) {
+                return a + b;
+            }
+        });
+
+        rpc.client('testService' + i++).add(1, 2)
+            .then(result => {
+                st.equal(result, 3);
+            });
+    });
+
+    t.test('should return result object', st => {
+        st.plan(2);
+
+        rpc.server('testService' + i, {
+            calculate: function*(a, b) {
+                return {add: a + b, multiply: a * b};
+            }
+        });
+
+        rpc.client('testService' + i++).calculate(1, 2)
+            .then(result => {
+                st.equal(result.add, 3);
+                st.equal(result.multiply, 2);
+                shutdown();
+            });
+    });
 });
