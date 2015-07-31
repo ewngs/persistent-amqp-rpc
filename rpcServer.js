@@ -55,7 +55,6 @@ class RPCServer {
             .then(() => {
                 console.log(`${self.serviceName} started. Awaiting RPC requests`);
             });
-
     }
 
     process(message) {
@@ -69,7 +68,6 @@ class RPCServer {
         }
 
         const method = this.methods[data.method];
-
 
         if(method) {
             if(isGenerator(method)) {
@@ -101,7 +99,7 @@ class RPCServer {
         } catch (err) {
             response = new Buffer(JSON.stringify({err: new VError(err, `RPC method response creating error on ${this.serviceName}!`)}));
         }
-        console.log(response.toString(), message.properties.replyTo);
+
         this.channel.sendToQueue(message.properties.replyTo, response, {correlationId: message.properties.correlationId});
         this.channel.ack(message);
     }
