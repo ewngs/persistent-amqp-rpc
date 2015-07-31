@@ -3,6 +3,7 @@
 require('harmony-reflect');
 const amqp = require('amqplib');
 const Hashids = require('hashids');
+const VError = require('verror');
 
 const rpcQueueOptions = {durable: false};
 const replyToQueueOptions = {durable: false, exclusive: true};
@@ -69,12 +70,13 @@ class RPCClient {
         this.proxy = new Proxy({}, {
             get(targetObj, method) {
                 return function () {
+                    const args = Array.prototype.slice.call(arguments);
                     return new Promise(function (resolve, reject) {
                         let uid = self.generateUID();
                         self.functionQueue[uid] = {
                             uid,
                             method,
-                            arguments: Array.prototype.slice.call(arguments),
+                            arguments: args,
                             sent: false,
                             resolve,
                             reject
@@ -121,8 +123,24 @@ class RPCClient {
         const uid = message.properties.correlationId;
         const def = this.functionQueue[uid];
         if (def) {
+            let data;
             delete this.functionQueue[uid];
-            def.resolve('reply!');
+
+            try {
+                data = JSON.parse(message.content.toString());
+            } catch(err) {
+                def.resolve(new VError(err, `RPC message parsing error on ${this.serviceName}!`));
+                return;
+            }
+
+            console.log('Got response in', (Date.now() - def.sent.getTime()) / 1000, 'sec');
+
+            if (data.err) {
+                def.reject(data.err);
+            }
+            else {
+                def.resolve(data.result);
+            }
         }
     }
 
