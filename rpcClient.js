@@ -118,7 +118,7 @@ class RPCClient {
             return;
         }
 
-        const uid = message.correlationId;
+        const uid = message.properties.correlationId;
         const def = this.functionQueue[uid];
         if (def) {
             delete this.functionQueue[uid];
