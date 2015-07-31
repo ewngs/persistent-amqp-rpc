@@ -1,45 +1,43 @@
 'use strict';
-
 require('harmony-reflect');
 const amqp = require('amqplib');
-
+const co = require('co');
 const queueOptions = {durable: false};
 
 class RPCServer {
-
-  constructor(serviceName, modul) {
+  constructor(serviceName, methods) {
     this.serviceName = serviceName;
-    this.modul = modul;
+    this.methods = methods;
     this.queue = `rpc.queue.${this.serviceName}`;
+  }
 
-    if (amqpChannel && !this.queueRegistered) {
-      this.registerQueue();
-    }
+  *start() {
+      const conn = yield amqp.connect('amqp://localhost');
 
-    this.proxy = new Proxy({}, {
-      get(targetObj, propKey) {
-        return function () {
-          return new Promise(function (resolve) {
-            setTimeout(resolve, 1000);
-          });
-        };
+      process.once('SIGINT', function() { conn.close(); });
+      this.channel = yield conn.createChannel();
+      console.log('RabbitMQ Channel Opened');
+      yield this.channel.assertQueue(this.queue, queueOptions);
+      this.channel.prefetch(1);
+      yield this.channel.consume(this.queue, this.process);
+      console.log(`${this.serviceName} service started. Awaiting RPC requests`);
+  }
+
+  process(message) {
+      let response;
+      try {
+          const data = JSON.parse(message.content.toString());
+          response = new Buffer(JSON.stringify(this.methods[data.method].apply(undefined, data.arguments)));
+      } catch (error) {
+          response = new Buffer(JSON.stringify({error: error}));
       }
-    });
+      this.sendToQueue(message.properties.replyTo, response, {correlationId: message.properties.correlationId});
+      this.channel.ack(message);
   }
-
-  start() {
-      amqp
-        .connect('amqp://localhost')
-        .then(connection => connection.createChannel())
-        .then(function(channel){
-            console.log('RabbitMQ Channel Opened');
-            channel.assertQueue(this.queue, queueOptions);
-        });
-  }
-
 }
 
-module.exports = function (serviceName, modul) {
-  let server = new RPCServer(serviceName, modul);
-  server.start();
+module.exports = function (serviceName, methods) {
+    const server = new RPCServer(serviceName, methods);
+    co(server.start())
+        .catch(console.warn);
 };
