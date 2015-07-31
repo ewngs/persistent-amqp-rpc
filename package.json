@@ -13,6 +13,7 @@
     "amqplib": "^0.3.2",
     "co": "^4.6.0",
     "harmony-reflect": "^1.4.0",
-    "hashids": "1.0.2"
+    "hashids": "1.0.2",
+    "verror": "^1.6.0"
   }
 }
