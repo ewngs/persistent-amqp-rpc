@@ -57,7 +57,7 @@ process.on('SIGINT', function () {
 class RPCClient {
 
     constructor(serviceName) {
-        let self = this;
+        const self = this;
         this.serviceName = serviceName;
         this.rpcQueueName = `rpc.queue.${serviceName}`;
         this.functionQueue = {};
@@ -98,7 +98,7 @@ class RPCClient {
     }
 
     registerQueues() {
-        let self = this;
+        const self = this;
         amqpChannel
             .assertQueue(this.rpcQueueName, rpcQueueOptions)
             .then(() => amqpChannel.assertQueue(null, replyToQueueOptions))
@@ -118,8 +118,8 @@ class RPCClient {
             return;
         }
 
-        let uid = message.correlationId;
-        let def = this.functionQueue[uid];
+        const uid = message.correlationId;
+        const def = this.functionQueue[uid];
         if (def) {
             delete this.functionQueue[uid];
             def.resolve('reply!');
@@ -130,14 +130,14 @@ class RPCClient {
         if (!this.queuesRegistered) {
             return undefined;
         }
-        let self = this;
+        const self = this;
         return amqpChannel
             .deleteQueue(this.replyToQueueName)
             .then(() => self.queuesRegistered = false);
     }
 
     processFunctionQueue() {
-        let self = this;
+        const self = this;
         Object.keys(this.functionQueue).forEach(uid => {
             let def = self.functionQueue[uid];
             if (!def.sent) {
