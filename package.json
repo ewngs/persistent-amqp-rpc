@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "client": "iojs --harmony_proxies --harmony_arrow_functions ./testClient.js",
-    "server": "iojs --harmony_proxies --harmony_arrow_functions ./testServer.js"
+    "server": "iojs --harmony_proxies --harmony_arrow_functions ./testServer.js",
+    "test": "iojs --harmony_proxies --harmony_arrow_functions ./test.js | tap-spec"
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +16,9 @@
     "harmony-reflect": "^1.4.0",
     "hashids": "1.0.2",
     "verror": "^1.6.0"
+  },
+  "devDependencies": {
+    "tap-spec": "^4.0.2",
+    "tape": "^4.0.1"
   }
 }

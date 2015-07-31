@@ -19,6 +19,8 @@ const someService = require('./rpcClient')('someService');
 const co = require('co');
 
 co(function* () {
-  let res = yield someService.testMethod('ccc');
-  console.log(res);
+    let i = 0;
+    while(isFinite(1)) {
+        console.log(yield someService.testMethod(i++));
+    }
 });

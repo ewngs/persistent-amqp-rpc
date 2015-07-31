@@ -100,8 +100,12 @@ class RPCServer {
             response = new Buffer(JSON.stringify({err: new VError(err, `RPC method response creating error on ${this.serviceName}!`)}));
         }
 
-        this.channel.sendToQueue(message.properties.replyTo, response, {correlationId: message.properties.correlationId});
-        this.channel.ack(message);
+        try {
+            this.channel.sendToQueue(message.properties.replyTo, response, {correlationId: message.properties.correlationId});
+            this.channel.ack(message);
+        } catch (err) {
+            console.error(err);
+        }
     }
 }
 
