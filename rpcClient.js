@@ -5,19 +5,54 @@ const amqp = require('amqplib');
 const Hashids = require('hashids');
 
 const rpcQueueOptions = {durable: false};
-const replyToQueueOptions = {durable: false};
-let amqpChannel;
+const replyToQueueOptions = {durable: false, exclusive: true};
+const amqpConnectString = 'amqp://localhost';
+let amqpConnection, amqpChannel;
 let localClients = {};
+let shutDown = false;
 
-amqp.connect('amqp://localhost')
-    .then(connection => connection.createChannel())
-    .then(channel => {
-        amqpChannel = channel;
-        console.log('RabbitMQ Channel Opened');
-        Object.keys(localClients).forEach(serviceName => {
-            localClients[serviceName].registerQueues();
+function onChannelError(err) {
+    console.error('RabbitMQ Channel Error:', err);
+}
+
+function onChannelClose() {
+    console.log('RabbitMQ Channel Closed');
+    if (!shutDown) {
+        console.log('...restart');
+    }
+}
+
+function connect() {
+    amqp.connect(amqpConnectString)
+        .then(connection => {
+            amqpConnection = connection;
+            return connection.createChannel();
+        })
+        .then(channel => {
+            amqpChannel = channel;
+            channel.on('error', onChannelError);
+            channel.on('close', onChannelClose);
+            console.log('RabbitMQ Channel Opened');
+            registerClientQueues();
         });
+}
+
+function registerClientQueues() {
+    Object.keys(localClients).forEach(serviceName => {
+        localClients[serviceName].registerQueues();
     });
+}
+
+connect();
+
+// TODO: replace with better signal handling
+process.on('SIGINT', function () {
+    shutDown = true;
+    let cleanupJobs = Object.keys(localClients).map(serviceName => localClients[serviceName].cleanupQueues());
+    Promise.all(cleanupJobs).then(() => {
+        amqpConnection.close();
+    });
+});
 
 class RPCClient {
 
@@ -69,18 +104,36 @@ class RPCClient {
             .then(() => amqpChannel.assertQueue(null, replyToQueueOptions))
             .then(replyToQueueData => {
                 self.replyToQueueName = replyToQueueData.queue;
-                self.queuesRegistered = true;
-                self.processFunctionQueue();
+                amqpChannel
+                    .consume(self.replyToQueueName, self.processReply.bind(self), {noAck: true})
+                    .then(() => {
+                        self.queuesRegistered = true;
+                        self.processFunctionQueue();
+                    });
             });
     }
 
-    cleanupQueues() {
-        if (this.queuesRegistered) {
-            let self = this;
-            amqpChannel
-                .deleteQueue(this.replyToQueueName)
-                .then(() => self.queuesRegistered = false);
+    processReply(message) {
+        if (!message) {
+            return;
         }
+
+        let uid = message.correlationId;
+        let def = this.functionQueue[uid];
+        if (def) {
+            delete this.functionQueue[uid];
+            def.resolve('reply!');
+        }
+    }
+
+    cleanupQueues() {
+        if (!this.queuesRegistered) {
+            return undefined;
+        }
+        let self = this;
+        return amqpChannel
+            .deleteQueue(this.replyToQueueName)
+            .then(() => self.queuesRegistered = false);
     }
 
     processFunctionQueue() {
