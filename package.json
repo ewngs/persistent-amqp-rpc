@@ -6,6 +6,7 @@
   "scripts": {
     "client": "iojs --harmony_proxies --harmony_arrow_functions test/testClient.js",
     "server": "iojs --harmony_proxies --harmony_arrow_functions test/testServer.js",
+    "persistent": "iojs --harmony_proxies --harmony_arrow_functions test/persistent.js",
     "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
   "author": "",
