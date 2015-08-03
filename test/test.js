@@ -1,4 +1,5 @@
 'use strict';
+
 const test = require('tape');
 const rpc = require('..');
 
@@ -67,6 +68,21 @@ test('simple functions', t => {
                 st.equal(result.multiply, 2);
             });
     });
+
+    t.test('should rethrow exceptions', st => {
+        st.plan(1);
+
+        rpc.server('testService' + i, {
+            explode: function() {
+                throw new Error('test error');
+            }
+        });
+
+        rpc.client('testService' + i++).explode()
+            .catch(err => {
+                st.equal(err.message, 'test error');
+            });
+    });
 });
 
 test('generator functions', t => {
@@ -124,6 +140,21 @@ test('generator functions', t => {
             .then(result => {
                 st.equal(result.add, 3);
                 st.equal(result.multiply, 2);
+            });
+    });
+
+    t.test('should rethrow exceptions', st => {
+        st.plan(1);
+
+        rpc.server('testService' + i, {
+            explode: function*() {
+                throw new Error('test error');
+            }
+        });
+
+        rpc.client('testService' + i++).explode()
+            .catch(err => {
+                st.equal(err.message, 'test error');
                 shutdown();
             });
     });
