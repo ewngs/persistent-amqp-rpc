@@ -7,7 +7,7 @@ function someAsyncOveration(param) {
         setTimeout(function() {
             console.log(`some async operation finished! Params: ${param}`);
             resolve();
-        }, 1000);
+        }, 10);
     });
 }
 
