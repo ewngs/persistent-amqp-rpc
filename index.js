@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-    server: require('./lib/rpcServer'),
-    client: require('./lib/rpcClient')
+    server: require('./lib/rpc-server'),
+    client: require('./lib/rpc-client')
 };
