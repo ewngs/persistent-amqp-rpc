@@ -1,0 +1,36 @@
+{
+  "name": "amqp-rpc",
+  "version": "0.1.0",
+  "description": "AMQP RPC Module with Persistence",
+  "main": "amqp-rpc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewngs/amqp-rpc.git"
+  },
+  "keywords": [
+    "amqp",
+    "rpc",
+    "persistent"
+  ],
+  "author": {
+      "name": "Igor Mucsicska",
+      "email": "igor@elasticwings.com"
+  },
+  "contributors": [
+    {
+      "name": "Peter Kovacs",
+      "email": "kiwep@elasticwings.com"
+    }
+  ],
+  "engines": {
+    "iojs": ">=2.5.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ewngs/amqp-rpc/issues"
+  },
+  "homepage": "https://github.com/ewngs/amqp-rpc#readme"
+}
