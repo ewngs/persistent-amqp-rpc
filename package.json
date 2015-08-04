@@ -19,8 +19,8 @@
     "persistent"
   ],
   "author": {
-      "name": "Igor Mucsicska",
-      "email": "igor@elasticwings.com"
+    "name": "Igor Mucsicska",
+    "email": "igor@elasticwings.com"
   },
   "contributors": [
     {
@@ -41,8 +41,8 @@
     "co": "^4.6.0",
     "harmony-reflect": "^1.4.0",
     "hashids": "1.0.2",
-    "verror": "^1.6.0",
-    "persistent-amqp": "ewngs/persistent-amqp"
+    "persistent-amqp": "^0.1.1",
+    "verror": "^1.6.0"
   },
   "devDependencies": {
     "tap-spec": "^4.0.2",
