@@ -1,7 +1,7 @@
 {
-  "name": "mqrpc",
-  "version": "1.0.0",
-  "description": "",
+  "name": "amqp-rpc",
+  "version": "0.1.0",
+  "description": "AMQP RPC Module with Persistence",
   "main": "index.js",
   "scripts": {
     "client": "iojs --harmony_proxies --harmony_arrow_functions test/testClient.js",
@@ -9,8 +9,33 @@
     "persistent": "iojs --harmony_proxies --harmony_arrow_functions test/persistent.js",
     "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewngs/amqp-rpc.git"
+  },
+  "keywords": [
+    "amqp",
+    "rpc",
+    "persistent"
+  ],
+  "author": {
+      "name": "Igor Mucsicska",
+      "email": "igor@elasticwings.com"
+  },
+  "contributors": [
+    {
+      "name": "Peter Kovacs",
+      "email": "kiwep@elasticwings.com"
+    }
+  ],
+  "engines": {
+    "iojs": ">=2.5.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ewngs/amqp-rpc/issues"
+  },
+  "homepage": "https://github.com/ewngs/amqp-rpc#readme",
   "dependencies": {
     "amqplib": "^0.3.2",
     "co": "^4.6.0",
