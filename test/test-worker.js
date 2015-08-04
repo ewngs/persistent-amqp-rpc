@@ -7,7 +7,7 @@ function someAsyncOveration(param) {
         setTimeout(function() {
             console.log(`some async operation finished! Params: ${param}`);
             resolve();
-        }, 10);
+        }, 1000);
     });
 }
 
@@ -15,6 +15,15 @@ function* testMethod(param) {
     return yield someAsyncOveration(param);
 }
 
-rpc.worker('someService', {
+const worker = rpc.worker('someService', {
     testMethod: testMethod
+});
+
+
+process.on('SIGHUP', () => {
+    console.log('HUP received. Terminating...');
+    worker.terminate()
+        .catch(function (err) {
+            console.log(err);
+        });
 });

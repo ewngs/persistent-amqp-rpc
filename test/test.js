@@ -155,7 +155,43 @@ test('generator functions', t => {
         rpc.client('testService' + i++).explode()
             .catch(err => {
                 st.equal(err.message, 'test error');
-                shutdown();
             });
     });
+});
+
+test('worker graceful termination', t => {
+    t.plan(2);
+
+    let ready;
+    let done = 0;
+    const promise = new Promise(resolve => {
+        ready = resolve;
+    });
+
+    const worker = rpc.worker('testServiceA', {
+        waitForReady: function*() {
+            yield promise;
+            done++;
+        }
+    });
+
+    rpc.client('testServiceA').waitForReady()
+        .then(() => {
+            worker.terminate()
+                .then(() => {
+                    t.equal(done, 5);
+                    shutdown();
+                });
+
+            rpc.client('testServiceA').waitForReady();
+            rpc.client('testServiceA').waitForReady();
+            rpc.client('testServiceA').waitForReady();
+        });
+    rpc.client('testServiceA').waitForReady();
+    rpc.client('testServiceA').waitForReady();
+    rpc.client('testServiceA').waitForReady();
+    rpc.client('testServiceA').waitForReady();
+
+    t.equal(done, 0);
+    ready();
 });
