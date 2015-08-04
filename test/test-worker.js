@@ -15,6 +15,6 @@ function* testMethod(param) {
     return yield someAsyncOveration(param);
 }
 
-rpc.server('someService', {
+rpc.worker('someService', {
     testMethod: testMethod
 });

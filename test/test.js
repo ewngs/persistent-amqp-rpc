@@ -15,7 +15,7 @@ test('simple functions', t => {
     t.test('should call', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             testCall: function() {
                 st.pass('It should call the RPC function');
             }
@@ -27,7 +27,7 @@ test('simple functions', t => {
     t.test('should pass parameters', st => {
         st.plan(3);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             testParams: function(a, b, c) {
                 st.equal(a, 1);
                 st.equal(b, 'two');
@@ -41,7 +41,7 @@ test('simple functions', t => {
     t.test('should return result', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             add: function(a, b) {
                 return a + b;
             }
@@ -56,7 +56,7 @@ test('simple functions', t => {
     t.test('should return result object', st => {
         st.plan(2);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             calculate: function(a, b) {
                 return {add: a + b, multiply: a * b};
             }
@@ -72,7 +72,7 @@ test('simple functions', t => {
     t.test('should rethrow exceptions', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             explode: function() {
                 throw new Error('test error');
             }
@@ -89,7 +89,7 @@ test('generator functions', t => {
     t.test('should call', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             testCall: function*() {
                 st.pass('It should call the RPC function');
             }
@@ -101,7 +101,7 @@ test('generator functions', t => {
     t.test('should pass parameters', st => {
         st.plan(3);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             testParams: function*(a, b, c) {
                 st.equal(a, 1);
                 st.equal(b, 'two');
@@ -115,7 +115,7 @@ test('generator functions', t => {
     t.test('should return result', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             add: function*(a, b) {
                 return a + b;
             }
@@ -130,7 +130,7 @@ test('generator functions', t => {
     t.test('should return result object', st => {
         st.plan(2);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             calculate: function*(a, b) {
                 return {add: a + b, multiply: a * b};
             }
@@ -146,7 +146,7 @@ test('generator functions', t => {
     t.test('should rethrow exceptions', st => {
         st.plan(1);
 
-        rpc.server('testService' + i, {
+        rpc.worker('testService' + i, {
             explode: function*() {
                 throw new Error('test error');
             }

@@ -2,7 +2,7 @@
 
 module.exports = function(amqpConnectString) {
     return {
-        server: require('./lib/rpc-server').bind(undefined, amqpConnectString),
+        worker: require('./lib/rpc-worker').bind(undefined, amqpConnectString),
         client: require('./lib/rpc-client').bind(undefined, amqpConnectString)
     };
 };

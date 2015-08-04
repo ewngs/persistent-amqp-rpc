@@ -11,9 +11,9 @@ setInterval(function() {
         try {
             console.log(yield someService.testMethod(i++));
         } catch (err) {
-            console.log(err);
+            console.log(err.message);
         }
     }).catch(function (err) {
-        console.log(err);
+        console.log(err.message);
     });
 }, 500);

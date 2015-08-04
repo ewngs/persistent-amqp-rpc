@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "client": "iojs --harmony_proxies --harmony_arrow_functions test/test-client.js",
-    "server": "iojs --harmony_proxies --harmony_arrow_functions test/test-server.js",
+    "worker": "iojs --harmony_proxies --harmony_arrow_functions test/test-worker.js",
     "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
   "repository": {
