@@ -4,9 +4,8 @@
   "description": "AMQP RPC Module with Persistence",
   "main": "index.js",
   "scripts": {
-    "client": "iojs --harmony_proxies --harmony_arrow_functions test/testClient.js",
-    "server": "iojs --harmony_proxies --harmony_arrow_functions test/testServer.js",
-    "persistent": "iojs --harmony_proxies --harmony_arrow_functions test/persistent.js",
+    "client": "iojs --harmony_proxies --harmony_arrow_functions test/test-client.js",
+    "server": "iojs --harmony_proxies --harmony_arrow_functions test/test-server.js",
     "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
   "repository": {
@@ -41,7 +40,7 @@
     "co": "^4.6.0",
     "harmony-reflect": "^1.4.0",
     "hashids": "1.0.2",
-    "persistent-amqp": "^0.1.1",
+    "persistent-amqp": "^0.1.2",
     "verror": "^1.6.0"
   },
   "devDependencies": {

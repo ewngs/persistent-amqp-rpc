@@ -1,11 +1,12 @@
 'use strict';
 
-const amqpConnectString = 'amqp://localhost';
+const rpc = require('..')('amqp://localhost');
 
 function someAsyncOveration(param) {
     return new Promise(function (resolve) {
         setTimeout(function() {
-            resolve(`some async operation finished! Params: ${param}`);
+            console.log(`some async operation finished! Params: ${param}`);
+            resolve();
         }, 1000);
     });
 }
@@ -14,6 +15,6 @@ function* testMethod(param) {
     return yield someAsyncOveration(param);
 }
 
-require('..').server(amqpConnectString, 'someService', {
+rpc.server('someService', {
     testMethod: testMethod
 });

@@ -1,7 +1,7 @@
 'use strict';
 
-const amqpConnectString = 'amqp://localhost';
-const someService = require('..').client('someService');
+const rpc = require('..')('amqp://localhost');
+const someService = rpc.client('someService');
 const co = require('co');
 
 co(function* () {
