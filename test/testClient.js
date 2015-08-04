@@ -1,20 +1,6 @@
-//
-// const amqp = require('amqplib');
-//
-// const queueName = 'testQueue';
-// const queueOptions = {durable: false};
-//
-// const link = amqp.connect('amqp://localhost');
-//
-// link.then(function (connection) {
-//   return connection.createChannel();
-// }).then(function (channel) {
-//   return channel.assertQueue(queueName, queueOptions).then(function () {
-//     channel.sendToQueue(queueName, new Buffer('this is a message'));
-//   });
-// });
-
 'use strict';
+
+const amqpConnectString = 'amqp://localhost';
 const someService = require('..').client('someService');
 const co = require('co');
 
