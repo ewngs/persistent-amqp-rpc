@@ -1,6 +1,6 @@
 'use strict';
 
-const rpc = require('..')('amqp://localhost');
+const rpc = require('..')();
 
 function someAsyncOveration(param) {
     return new Promise(function (resolve) {

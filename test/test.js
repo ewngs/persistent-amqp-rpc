@@ -1,7 +1,7 @@
 'use strict';
 
 const test = require('tape');
-const rpc = require('..')('amqp://localhost');
+const rpc = require('..')({procedureCallTimeout: 100});
 
 let processes = [];
 
@@ -260,10 +260,9 @@ test('client graceful termination', t => {
             client.terminate()
                 .then(() => {
                     t.equal(done, 6);
+
                     processes.push(worker);
                     t.end();
-
-                    terminateAllProcesses();
                 });
             client.waitForReady();
             client.waitForReady();
@@ -277,4 +276,20 @@ test('client graceful termination', t => {
 
     t.equal(done, 0);
     ready();
+});
+
+test('client RPC timeout', t => {
+    const client = rpc.client('testServiceM');
+    client.waitForReady()
+        .catch(err => {
+            t.equal(err.message, 'waitForReady RPC timeout on testServiceM');
+
+            processes.push(client);
+            t.end();
+
+            terminateAllProcesses();
+        });
+    client.waitForReady();
+    client.waitForReady();
+
 });
