@@ -3,194 +3,277 @@
 const test = require('tape');
 const rpc = require('..')('amqp://localhost');
 
-let i = 1;
+let processes = [];
 
-function shutdown() {
-    setTimeout(() => {
-        process.emit('SIGINT');
-    }, 10);
+function terminateAllProcesses() {
+    for (let p of processes) {
+        p.terminate();
+    }
 }
 
 test('simple functions', t => {
     t.test('should call', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceA');
+        const worker = rpc.worker('testServiceA', {
             testCall: function() {
                 st.pass('It should call the RPC function');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             }
         });
 
-        rpc.client('testService' + i++).testCall();
+        client.testCall();
     });
 
     t.test('should pass parameters', st => {
-        st.plan(3);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceB');
+        const worker = rpc.worker('testServiceB', {
             testParams: function(a, b, c) {
                 st.equal(a, 1);
                 st.equal(b, 'two');
                 st.deepEqual(c, [3]);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             }
         });
 
-        rpc.client('testService' + i++).testParams(1, 'two', [3]);
+        client.testParams(1, 'two', [3]);
     });
 
     t.test('should return result', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceC');
+        const worker = rpc.worker('testServiceC', {
             add: function(a, b) {
                 return a + b;
             }
         });
 
-        rpc.client('testService' + i++).add(1, 2)
+        client.add(1, 2)
             .then(result => {
                 st.equal(result, 3);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 
     t.test('should return result object', st => {
-        st.plan(2);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceD');
+        const worker = rpc.worker('testServiceD', {
             calculate: function(a, b) {
                 return {add: a + b, multiply: a * b};
             }
         });
 
-        rpc.client('testService' + i++).calculate(1, 2)
+        client.calculate(1, 2)
             .then(result => {
                 st.equal(result.add, 3);
                 st.equal(result.multiply, 2);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 
     t.test('should rethrow exceptions', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceE');
+        const worker = rpc.worker('testServiceE', {
             explode: function() {
                 throw new Error('test error');
             }
         });
 
-        rpc.client('testService' + i++).explode()
+        client.explode()
             .catch(err => {
                 st.equal(err.message, 'test error');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 });
 
 test('generator functions', t => {
     t.test('should call', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceF');
+        const worker = rpc.worker('testServiceF', {
             testCall: function*() {
                 st.pass('It should call the RPC function');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             }
         });
 
-        rpc.client('testService' + i++).testCall();
+        client.testCall();
     });
 
     t.test('should pass parameters', st => {
-        st.plan(3);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceG');
+        const worker = rpc.worker('testServiceG', {
             testParams: function*(a, b, c) {
                 st.equal(a, 1);
                 st.equal(b, 'two');
                 st.deepEqual(c, [3]);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             }
         });
 
-        rpc.client('testService' + i++).testParams(1, 'two', [3]);
+        client.testParams(1, 'two', [3]);
     });
 
     t.test('should return result', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceH');
+        const worker = rpc.worker('testServiceH', {
             add: function*(a, b) {
                 return a + b;
             }
         });
 
-        rpc.client('testService' + i++).add(1, 2)
+        client.add(1, 2)
             .then(result => {
                 st.equal(result, 3);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 
     t.test('should return result object', st => {
-        st.plan(2);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceI');
+        const worker = rpc.worker('testServiceI', {
             calculate: function*(a, b) {
                 return {add: a + b, multiply: a * b};
             }
         });
 
-        rpc.client('testService' + i++).calculate(1, 2)
+        client.calculate(1, 2)
             .then(result => {
                 st.equal(result.add, 3);
                 st.equal(result.multiply, 2);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 
     t.test('should rethrow exceptions', st => {
-        st.plan(1);
-
-        rpc.worker('testService' + i, {
+        const client = rpc.client('testServiceJ');
+        const worker = rpc.worker('testServiceJ', {
             explode: function*() {
                 throw new Error('test error');
             }
         });
 
-        rpc.client('testService' + i++).explode()
+        client.explode()
             .catch(err => {
                 st.equal(err.message, 'test error');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
             });
     });
 });
 
 test('worker graceful termination', t => {
-    t.plan(2);
-
     let ready;
     let done = 0;
+    let cleanupWorker;
     const promise = new Promise(resolve => {
         ready = resolve;
     });
 
-    const worker = rpc.worker('testServiceA', {
+    const client = rpc.client('testServiceK');
+    const worker = rpc.worker('testServiceK', {
         waitForReady: function*() {
             yield promise;
             done++;
         }
     });
 
-    rpc.client('testServiceA').waitForReady()
+    client.waitForReady()
         .then(() => {
             worker.terminate()
                 .then(() => {
                     t.equal(done, 5);
-                    shutdown();
+
+                    cleanupWorker = rpc.worker('testServiceK', {
+                        waitForReady: function*() {
+                            yield promise;
+                            done++;
+                        }
+                    });
+
+                    return client.waitForReady();
+                })
+                .then(() => {
+                    processes.push(client);
+                    processes.push(cleanupWorker);
+                    t.end();
                 });
 
-            rpc.client('testServiceA').waitForReady();
-            rpc.client('testServiceA').waitForReady();
-            rpc.client('testServiceA').waitForReady();
+            client.waitForReady();
+            client.waitForReady();
+            client.waitForReady();
         });
-    rpc.client('testServiceA').waitForReady();
-    rpc.client('testServiceA').waitForReady();
-    rpc.client('testServiceA').waitForReady();
-    rpc.client('testServiceA').waitForReady();
+    client.waitForReady();
+    client.waitForReady();
+    client.waitForReady();
+    client.waitForReady();
+
+    t.equal(done, 0);
+    ready();
+});
+
+test('client graceful termination', t => {
+    let ready;
+    let done = 0;
+
+    const promise = new Promise(resolve => {
+        ready = resolve;
+    });
+
+    const client = rpc.client('testServiceL');
+    const worker = rpc.worker('testServiceL', {
+        waitForReady: function*() {
+            yield promise;
+            done++;
+        }
+    });
+
+    client.waitForReady()
+        .then(() => {
+            client.terminate()
+                .then(() => {
+                    t.equal(done, 6);
+                    processes.push(worker);
+                    t.end();
+
+                    terminateAllProcesses();
+                });
+            client.waitForReady();
+            client.waitForReady();
+            client.waitForReady();
+        });
+    client.waitForReady();
+    client.waitForReady();
+    client.waitForReady();
+    client.waitForReady();
+    client.waitForReady();
 
     t.equal(done, 0);
     ready();

@@ -6,14 +6,27 @@ const co = require('co');
 
 let i = 0;
 
-setInterval(function() {
+const interval = setInterval(function() {
     co(function* () {
         try {
-            console.log(yield someService.testMethod(i++));
+            yield someService.testMethod(i);
         } catch (err) {
             console.log(err.message);
         }
     }).catch(function (err) {
         console.log(err.message);
     });
+
+    i++;
 }, 500);
+
+process.on('SIGHUP', () => {
+    console.log('HUP received. Terminating...');
+    someService.terminate()
+        .then(() => {
+            clearInterval(interval);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+});
