@@ -1,7 +1,8 @@
 'use strict';
 
 const test = require('tape');
-const rpc = require('..')({procedureCallTimeout: 100});
+const rpc = require('..')();
+const rpcWithTimeout = require('..')({procedureCallTimeout: 100});
 
 let processes = [];
 
@@ -279,7 +280,7 @@ test('client graceful termination', t => {
 });
 
 test('client RPC timeout', t => {
-    const client = rpc.client('testServiceM');
+    const client = rpcWithTimeout.client('testServiceM');
     client.waitForReady()
         .catch(err => {
             t.equal(err.message, 'waitForReady RPC timeout on testServiceM');
