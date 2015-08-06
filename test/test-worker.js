@@ -21,8 +21,8 @@ const worker = rpc.worker('someService', {
 
 
 process.on('SIGHUP', () => {
-    console.log('HUP received. Terminating...');
-    worker.terminate()
+    console.log('HUP received. Shutdown...');
+    worker.shutdown()
         .catch(function (err) {
             console.log(err);
         });

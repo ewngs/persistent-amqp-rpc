@@ -6,9 +6,9 @@ const rpcWithTimeout = require('..')({procedureCallTimeout: 100});
 
 let processes = [];
 
-function terminateAllProcesses() {
+function shutdownAllProcesses() {
     for (let p of processes) {
-        p.terminate();
+        p.shutdown();
     }
 }
 
@@ -190,7 +190,7 @@ test('generator functions', t => {
     });
 });
 
-test('worker graceful termination', t => {
+test('worker graceful shutdown', t => {
     let ready;
     let done = 0;
     let cleanupWorker;
@@ -208,7 +208,7 @@ test('worker graceful termination', t => {
 
     client.waitForReady()
         .then(() => {
-            worker.terminate()
+            worker.shutdown()
                 .then(() => {
                     t.equal(done, 5);
 
@@ -240,7 +240,7 @@ test('worker graceful termination', t => {
     ready();
 });
 
-test('client graceful termination', t => {
+test('client graceful shutdown', t => {
     let ready;
     let done = 0;
 
@@ -258,7 +258,7 @@ test('client graceful termination', t => {
 
     client.waitForReady()
         .then(() => {
-            client.terminate()
+            client.shutdown()
                 .then(() => {
                     t.equal(done, 6);
 
@@ -288,7 +288,7 @@ test('client RPC timeout', t => {
             processes.push(client);
             t.end();
 
-            terminateAllProcesses();
+            shutdownAllProcesses();
         });
     client.waitForReady();
     client.waitForReady();

@@ -21,8 +21,8 @@ const interval = setInterval(function() {
 }, 500);
 
 process.on('SIGHUP', () => {
-    console.log('HUP received. Terminating...');
-    someService.terminate()
+    console.log('HUP received. Shutdown...');
+    someService.shutdown()
         .then(() => {
             clearInterval(interval);
         })
