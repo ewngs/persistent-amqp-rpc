@@ -1,5 +1,5 @@
 {
-  "name": "amqp-rpc",
+  "name": "persistent-amqp-rpc",
   "version": "0.1.0",
   "description": "AMQP RPC Module with Persistence",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ewngs/amqp-rpc.git"
+    "url": "git+https://github.com/ewngs/persistent-amqp-rpc.git"
   },
   "keywords": [
     "amqp",
@@ -32,9 +32,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ewngs/amqp-rpc/issues"
+    "url": "https://github.com/ewngs/persistent-amqp-rpc/issues"
   },
-  "homepage": "https://github.com/ewngs/amqp-rpc#readme",
+  "homepage": "https://github.com/ewngs/persistent-amqp-rpc#readme",
   "dependencies": {
     "amqplib": "^0.3.2",
     "bson": "^0.4.8",
