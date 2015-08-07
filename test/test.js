@@ -190,7 +190,7 @@ test('generator functions', t => {
     });
 });
 
-test('worker graceful shutdown', t => {
+/*test('worker graceful shutdown', t => {
     let ready;
     let done = 0;
     let cleanupWorker;
@@ -277,7 +277,7 @@ test('client graceful shutdown', t => {
 
     t.equal(done, 0);
     ready();
-});
+});*/
 
 test('client RPC timeout', t => {
     const client = rpcWithTimeout.client('testServiceM');
