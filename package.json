@@ -1,6 +1,6 @@
 {
   "name": "persistent-amqp-rpc",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "AMQP RPC Module with Persistence",
   "main": "index.js",
   "scripts": {
