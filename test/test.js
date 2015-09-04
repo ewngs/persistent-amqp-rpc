@@ -12,6 +12,13 @@ function shutdownAllProcesses() {
     }
 }
 
+function TestError(message) {
+    Error.captureStackTrace(this);
+    this.name = "TestError";
+    this.message = message;
+}
+TestError.prototype = Object.create(Error.prototype);
+
 test('simple functions', t => {
     t.test('should call', st => {
         const client = rpc.client('testServiceA');
@@ -99,12 +106,50 @@ test('simple functions', t => {
                 st.end();
             });
     });
+
+    t.test('should rethrow the same error object', st => {
+        const client = rpc.client('testServiceF');
+        const worker = rpc.worker('testServiceF', {
+            explode: function() {
+                throw new TestError('test error');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+                st.equal(err.name, 'TestError');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
+
+    t.test('should rethrow with stack trace', st => {
+        const client = rpc.client('testServiceG');
+        const worker = rpc.worker('testServiceG', {
+            explode: function() {
+                throw new TestError('test error');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+
+
+                st.notEqual(err.stack.indexOf('at Function.rpc.worker.explode'), -1);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
 });
 
 test('generator functions', t => {
     t.test('should call', st => {
-        const client = rpc.client('testServiceF');
-        const worker = rpc.worker('testServiceF', {
+        const client = rpc.client('testServiceGA');
+        const worker = rpc.worker('testServiceGA', {
             testCall: function*() {
                 st.pass('It should call the RPC function');
 
@@ -118,8 +163,8 @@ test('generator functions', t => {
     });
 
     t.test('should pass parameters', st => {
-        const client = rpc.client('testServiceG');
-        const worker = rpc.worker('testServiceG', {
+        const client = rpc.client('testServiceGB');
+        const worker = rpc.worker('testServiceGB', {
             testParams: function*(a, b, c) {
                 st.equal(a, 1);
                 st.equal(b, 'two');
@@ -135,8 +180,8 @@ test('generator functions', t => {
     });
 
     t.test('should return result', st => {
-        const client = rpc.client('testServiceH');
-        const worker = rpc.worker('testServiceH', {
+        const client = rpc.client('testServiceGC');
+        const worker = rpc.worker('testServiceGC', {
             add: function*(a, b) {
                 return a + b;
             }
@@ -153,8 +198,8 @@ test('generator functions', t => {
     });
 
     t.test('should return result object', st => {
-        const client = rpc.client('testServiceI');
-        const worker = rpc.worker('testServiceI', {
+        const client = rpc.client('testServiceGD');
+        const worker = rpc.worker('testServiceGD', {
             calculate: function*(a, b) {
                 return {add: a + b, multiply: a * b};
             }
@@ -172,8 +217,8 @@ test('generator functions', t => {
     });
 
     t.test('should rethrow exceptions', st => {
-        const client = rpc.client('testServiceJ');
-        const worker = rpc.worker('testServiceJ', {
+        const client = rpc.client('testServiceGE');
+        const worker = rpc.worker('testServiceGE', {
             explode: function*() {
                 throw new Error('test error');
             }
@@ -182,6 +227,42 @@ test('generator functions', t => {
         client.explode()
             .catch(err => {
                 st.equal(err.message, 'test error');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
+
+    t.test('should rethrow the same error object', st => {
+        const client = rpc.client('testServiceGF');
+        const worker = rpc.worker('testServiceGF', {
+            explode: function*() {
+                throw new TestError('test error');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+                st.equal(err.name, 'TestError');
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
+
+     t.test('should rethrow with stack trace', st => {
+        const client = rpc.client('testServiceGG');
+        const worker = rpc.worker('testServiceGG', {
+            explode: function*() {
+                throw new TestError('test error');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+                st.notEqual(err.stack.indexOf('at Function.rpc.worker.explode'), -1);
 
                 processes.push(client);
                 processes.push(worker);
@@ -280,10 +361,10 @@ test('client graceful shutdown', t => {
 });*/
 
 test('client RPC timeout', t => {
-    const client = rpcWithTimeout.client('testServiceM');
+    const client = rpcWithTimeout.client('timeoutService');
     client.waitForReady()
         .catch(err => {
-            t.equal(err.message, 'waitForReady RPC timeout on testServiceM');
+            t.equal(err.message, 'waitForReady RPC timeout on timeoutService');
 
             processes.push(client);
             t.end();
