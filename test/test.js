@@ -12,10 +12,11 @@ function shutdownAllProcesses() {
     }
 }
 
-function TestError(message) {
+function TestError(message, note) {
     Error.captureStackTrace(this);
     this.name = "TestError";
     this.message = message;
+    this.note = note;
 }
 TestError.prototype = Object.create(Error.prototype);
 
@@ -135,9 +136,25 @@ test('simple functions', t => {
 
         client.explode()
             .catch(err => {
-
-
                 st.notEqual(err.stack.indexOf('at Function.rpc.worker.explode'), -1);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
+
+    t.test('should preserve error properties', st => {
+        const client = rpc.client('testServiceH');
+        const worker = rpc.worker('testServiceH', {
+            explode: function() {
+                throw new TestError('test error', 'test note');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+                st.equal(err.note, 'test note');
 
                 processes.push(client);
                 processes.push(worker);
@@ -252,7 +269,7 @@ test('generator functions', t => {
             });
     });
 
-     t.test('should rethrow with stack trace', st => {
+    t.test('should rethrow with stack trace', st => {
         const client = rpc.client('testServiceGG');
         const worker = rpc.worker('testServiceGG', {
             explode: function*() {
@@ -263,6 +280,24 @@ test('generator functions', t => {
         client.explode()
             .catch(err => {
                 st.notEqual(err.stack.indexOf('at Function.rpc.worker.explode'), -1);
+
+                processes.push(client);
+                processes.push(worker);
+                st.end();
+            });
+    });
+
+    t.test('should preserve error properties', st => {
+        const client = rpc.client('testServiceGH');
+        const worker = rpc.worker('testServiceGH', {
+            explode: function*() {
+                throw new TestError('test error', 'test note');
+            }
+        });
+
+        client.explode()
+            .catch(err => {
+                st.equal(err.note, 'test note');
 
                 processes.push(client);
                 processes.push(worker);
