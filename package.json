@@ -4,9 +4,9 @@
   "description": "AMQP RPC Module with Persistence",
   "main": "index.js",
   "scripts": {
-    "client": "iojs --harmony_proxies --harmony_arrow_functions test/test-client.js",
-    "worker": "iojs --harmony_proxies --harmony_arrow_functions test/test-worker.js",
-    "test": "iojs --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
+    "client": "node --harmony_proxies --harmony_arrow_functions test/test-client.js",
+    "worker": "node --harmony_proxies --harmony_arrow_functions test/test-worker.js",
+    "test": "node --harmony_proxies --harmony_arrow_functions test/test.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,8 @@
     }
   ],
   "engines": {
-    "iojs": ">=2.5.0"
+    "iojs": ">=2.5.0",
+    "node": ">=4.0"
   },
   "license": "MIT",
   "bugs": {
